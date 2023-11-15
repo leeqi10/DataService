@@ -123,6 +123,7 @@ public class CreateCommonsDataS {
      * @param factor 动态因子
      * @param num 降低或者太高
      * @param polyCoefficients 多项式拟合参数
+     * @param rands 波动范围
      * @return 你所需要的数据
      */
     // TODO 根据函数造数据
@@ -163,9 +164,9 @@ public class CreateCommonsDataS {
             double fittedValue = polyval(polyCoefficients, i);
 
             // 根据原始数据的分布特征添加噪声
-            double noise = generateNoise(inputData,factor, rand);
+            double noise = generateNoisePlus(rands, rand);
 
-            double generatedValue = fittedValue + noise*rands+num;
+            double generatedValue = fittedValue + noise+num;
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
@@ -337,6 +338,21 @@ public class CreateCommonsDataS {
         int maxPlace = getMaxPlace(inputData);
         // 根据占比最多的位生成噪声，使用 factor 控制噪声的幅度
         double noise = (rand.nextDouble()*0.34 * Math.pow(10, maxPlace-1));
+        // 引入正负号
+        if (rand.nextBoolean()) {
+            noise = -noise;
+        }
+        return noise;
+    }
+    /**
+     * @apiNote 生成噪声函数，根据原始数据的分布特征
+     * @param rands 波动范围
+     * @param rand 伪随机数
+     * @return 返回噪声数
+     */
+    private static double generateNoisePlus( double rands, Random rand) {
+        // 根据占比最多的位生成噪声，使用 factor 控制噪声的幅度
+        double noise = (rand.nextDouble()*0.34 * rands);
         // 引入正负号
         if (rand.nextBoolean()) {
             noise = -noise;
