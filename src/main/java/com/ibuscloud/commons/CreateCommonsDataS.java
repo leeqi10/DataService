@@ -184,11 +184,10 @@ public class CreateCommonsDataS {
      * @param factor 动态因子
      * @param num 降低或者太高
      * @param polyCoefficients 多项式拟合参数
-     * @param rands 波动范围
      * @return 你所需要的数据
      */
     // TODO 根据函数造数据
-    public static double[] generateDataPlus(double[] inputData, double factor,double num,double[] polyCoefficients,double rands) {
+    public static double[] generateDataPlus(double[] inputData, double factor,double num,double[] polyCoefficients) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -225,7 +224,7 @@ public class CreateCommonsDataS {
             double fittedValue = polyval(polyCoefficients, i);
 
             // 根据原始数据的分布特征添加噪声
-            double noise = generateNoisePlus(rands, rand);
+            double noise = generateNoiseByFactor(inputData,factor, rand);
 
             double generatedValue = fittedValue + noise+num;
 
