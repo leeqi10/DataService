@@ -177,7 +177,6 @@ public class CreateCommonsDataS {
         // 返回生成的数据
         return generatedData;
     }
-    // 定义一个函数，根据给定因子生成数据
 
     /**
      * 根据函数造数据
@@ -185,10 +184,11 @@ public class CreateCommonsDataS {
      * @param factor 动态因子
      * @param num 降低或者太高
      * @param polyCoefficients 多项式拟合参数
+     * @param rands 波动范围
      * @return 你所需要的数据
      */
     // TODO 根据函数造数据
-    public static double[] generateDataPlus(double[] inputData, double factor,double num,double[] polyCoefficients) {
+    public static double[] generateDataPlus(double[] inputData, double factor,double num,double[] polyCoefficients,double rands) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -207,7 +207,7 @@ public class CreateCommonsDataS {
         }
 
         // 创建一个伪随机数生成器，使用因子作为种子
-         Random rand = new Random(Double.doubleToLongBits(factor));
+        Random rand = new Random(Double.doubleToLongBits(factor));
         // Random rand = new Random((long) factor);
         // 创建一个数组来存储生成的数据
         double[] generatedData = new double[inputData.length];
@@ -225,7 +225,7 @@ public class CreateCommonsDataS {
             double fittedValue = polyval(polyCoefficients, i);
 
             // 根据原始数据的分布特征添加噪声
-            double noise = generateNoise(inputData,factor, rand);
+            double noise = generateNoisePlus(rands, rand);
 
             double generatedValue = fittedValue + noise+num;
 
@@ -233,6 +233,57 @@ public class CreateCommonsDataS {
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
 
             generatedData[i] = generatedValue;
+        }
+
+        // 返回生成的数据
+        return generatedData;
+    }
+    // 定义一个函数，根据给定因子生成数据
+
+    /**
+     *
+     * @param inputData 原函数
+     * @param factor 动态因子，传入0的时候表示特别随机，不等于0的时候就你传入什么返回的结果就是一定的
+     * @param num 振幅变化 0-num
+     * @param maxInput 最小值
+     * @param minInput 最大值
+     * @return
+     */
+    // TODO 根据函数造数据
+    public static double[] generateDataBy(double[] inputData, long factor,double num,double maxInput,double minInput) {
+        // 检查输入数据是否为空或长度为0，如果是则返回空数组
+        if (inputData == null || inputData.length == 0) {
+            return new double[0];
+        }
+        Random rand = new Random();
+        // 创建一个伪随机数生成器，使用因子作为种子
+        if (factor != 0){
+            rand = new Random(factor);
+        }
+        // 创建一个数组来存储生成的数据
+        double[] generatedData = new double[inputData.length];
+        // 计算多项式拟合的系数
+        // 使用 Apache Commons Math 库进行多项式拟合
+        // double[] polyCoefficients = fitPolynomial(inputData, 8);
+        // 遍历输入数据的每个元素，生成数据并保持原始数据特征
+        for (int i = 0; i < inputData.length; i++) {
+            if (inputData[i]==0){
+                generatedData[i] = inputData[i];
+                continue;
+            }
+            double noise = rand.nextDouble()*num;
+
+            // 根据原始数据的分布特征添加噪声
+            if (rand.nextBoolean()) {
+                noise = -noise;
+            }
+
+            double generatedValue =  noise +generatedData[i];
+
+            // 确保生成的数据在原始数据范围内
+            generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
+
+            generatedData[i] = generatedValue ;
         }
 
         // 返回生成的数据
