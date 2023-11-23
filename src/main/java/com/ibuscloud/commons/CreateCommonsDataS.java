@@ -16,21 +16,21 @@ import java.util.stream.Collectors;
  */
 public class CreateCommonsDataS {
     /**
-     * @apiNote 创建单个值的数据
-     * @param minLimit 最小值
-     * @param maxLimit 最大值
+     * @param minLimit  最小值
+     * @param maxLimit  最大值
      * @param formatNum 保留几位小数
      * @return 返回你所需要的数据
+     * @apiNote 创建单个值的数据
      */
     @Deprecated
-    public static Object createDataByRandom(double minLimit,double maxLimit,int formatNum) {
+    public static Object createDataByRandom(double minLimit, double maxLimit, int formatNum) {
         Random random = new Random();
         double[] data = {(minLimit + (maxLimit - minLimit) * random.nextDouble()), minLimit + (maxLimit - minLimit) * random.nextDouble()};
         double bandwidth = 2.0;
         double jitterAmplitude = 0; // 抖动幅度
         double jitterFrequency = 0; // 抖动频率
 
-        double[] smoothedData = LoessSmoothing.smoothData(data, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency,formatNum);
+        double[] smoothedData = LoessSmoothing.smoothData(data, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency, formatNum);
         if (smoothedData.length == 0) {
             return 0.0; // 如果数组为空，返回 0.0 或者你认为合适地默认值
         }
@@ -45,16 +45,16 @@ public class CreateCommonsDataS {
         bd = bd.setScale(formatNum, BigDecimal.ROUND_HALF_UP); // 进位取舍
         return bd.doubleValue();
     }
+
     /**
-     *
      * @param minLimit 最小值
      * @param maxLimit 最大值
-     * @param sums 数据总数
-     * @param n 平滑次数
+     * @param sums     数据总数
+     * @param n        平滑次数
      * @return 数据
      */
     @Deprecated
-    public static double[] createIndicatorDataBySumsN(double minLimit, double maxLimit, int sums, int n,int formatNum) {
+    public static double[] createIndicatorDataBySumsN(double minLimit, double maxLimit, int sums, int n, int formatNum) {
         //默认数据
         double bandwidth = 2.0;
         double jitterAmplitude = 0; // 抖动幅度
@@ -64,15 +64,15 @@ public class CreateCommonsDataS {
 
         double[] origin = new double[sums];
         //随机数赋值
-        for (int i =0; i< origin.length ; i++) {
-            origin[i] = minLimit + (maxLimit - minLimit)*random.nextDouble();
+        for (int i = 0; i < origin.length; i++) {
+            origin[i] = minLimit + (maxLimit - minLimit) * random.nextDouble();
         }
         //数据平滑方法
         double[] smoothedData = origin;
         //循环次数
-        for (int i =0;i<n;i++){
+        for (int i = 0; i < n; i++) {
 
-            smoothedData = LoessSmoothing.smoothData(smoothedData, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency,formatNum);
+            smoothedData = LoessSmoothing.smoothData(smoothedData, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency, formatNum);
         }
         if (smoothedData.length == 0) {
             // 如果数组为空，返回 0.0 或者你认为合适地默认值
@@ -82,33 +82,35 @@ public class CreateCommonsDataS {
 
         return smoothedData;
     }
+
     /**
      * 暂时作为造数据的测试数据
-     * @param minLimit 起始值
-     * @param maxLimit 最大值
-     * @param bandwidth 平滑窗口 2.0初始值平滑
+     *
+     * @param minLimit        起始值
+     * @param maxLimit        最大值
+     * @param bandwidth       平滑窗口 2.0初始值平滑
      * @param jitterAmplitude 抖动幅度 1为初始值
      * @param jitterFrequency 抖动频率 1为初始值
-     * @param n 循环次数
-     * @param sums 数据总量
+     * @param n               循环次数
+     * @param sums            数据总量
      * @return
      */
     @Deprecated
-    public static double[] createIndicatorDataAll(double minLimit,double maxLimit,double bandwidth,double jitterAmplitude,double jitterFrequency,int sums,int n,int formatNum) {
+    public static double[] createIndicatorDataAll(double minLimit, double maxLimit, double bandwidth, double jitterAmplitude, double jitterFrequency, int sums, int n, int formatNum) {
         //随机数产生
         Random random = new Random();
 
         double[] origin = new double[sums];
         //随机数赋值
         //随机数赋值
-        for (int i =0; i< origin.length ; i++) {
-            origin[i] = minLimit + (maxLimit - minLimit)*random.nextDouble();
+        for (int i = 0; i < origin.length; i++) {
+            origin[i] = minLimit + (maxLimit - minLimit) * random.nextDouble();
         }
         //数据平滑方法
         double[] smoothedData = origin;
         //循环次数
-        for (int i =0;i<n;i++){
-            smoothedData = LoessSmoothing.smoothData(smoothedData, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency,formatNum);
+        for (int i = 0; i < n; i++) {
+            smoothedData = LoessSmoothing.smoothData(smoothedData, bandwidth, maxLimit, minLimit, jitterAmplitude, jitterFrequency, formatNum);
         }
         if (smoothedData.length == 0) {
             // 如果数组为空，返回 0.0 或者你认为合适地默认值
@@ -119,15 +121,16 @@ public class CreateCommonsDataS {
 
     /**
      * 根据函数造数据
-     * @param inputData 原函数
-     * @param factor 动态因子
-     * @param num 降低或者太高
+     *
+     * @param inputData        原函数
+     * @param factor           动态因子
+     * @param num              降低或者太高
      * @param polyCoefficients 多项式拟合参数
-     * @param rands 波动范围
+     * @param rands            波动范围
      * @return 你所需要的数据
      */
     // TODO 根据函数造数据
-    public static double[] generateDataPlusByRand(double[] inputData, double factor,double num,double[] polyCoefficients,double rands) {
+    public static double[] generateDataPlusByRand(double[] inputData, double factor, double num, double[] polyCoefficients, double rands) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -156,7 +159,7 @@ public class CreateCommonsDataS {
         // double[] polyCoefficients = fitPolynomial(inputData, 8);
         // 遍历输入数据的每个元素，生成数据并保持原始数据特征
         for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i]==0){
+            if (inputData[i] == 0) {
                 generatedData[i] = inputData[i];
                 continue;
             }
@@ -166,7 +169,7 @@ public class CreateCommonsDataS {
             // 根据原始数据的分布特征添加噪声
             double noise = generateNoisePlus(rands, rand);
 
-            double generatedValue = fittedValue + noise+num;
+            double generatedValue = fittedValue + noise + num;
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
@@ -180,14 +183,15 @@ public class CreateCommonsDataS {
 
     /**
      * 根据函数造数据
-     * @param inputData 原函数
-     * @param factor 动态因子
-     * @param num 降低或者太高
+     *
+     * @param inputData        原函数
+     * @param factor           动态因子
+     * @param num              降低或者太高
      * @param polyCoefficients 多项式拟合参数
      * @return 你所需要的数据
      */
     // TODO 根据函数造数据
-    public static double[] generateDataPlus(double[] inputData, double factor,double num,double[] polyCoefficients) {
+    public static double[] generateDataPlus(double[] inputData, double factor, double num, double[] polyCoefficients) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -216,7 +220,7 @@ public class CreateCommonsDataS {
         // double[] polyCoefficients = fitPolynomial(inputData, 8);
         // 遍历输入数据的每个元素，生成数据并保持原始数据特征
         for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i]==0){
+            if (inputData[i] == 0) {
                 generatedData[i] = inputData[i];
                 continue;
             }
@@ -224,9 +228,9 @@ public class CreateCommonsDataS {
             double fittedValue = polyval(polyCoefficients, i);
 
             // 根据原始数据的分布特征添加噪声
-            double noise = generateNoiseByFactor(inputData,factor, rand);
+            double noise = generateNoiseByFactor(inputData, factor, rand);
 
-            double generatedValue = fittedValue + noise+num;
+            double generatedValue = fittedValue + noise + num;
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
@@ -240,23 +244,22 @@ public class CreateCommonsDataS {
     // 定义一个函数，根据给定因子生成数据
 
     /**
-     *
      * @param inputData 原函数
-     * @param factor 动态因子，传入0的时候表示特别随机，不等于0的时候就你传入什么返回的结果就是一定的
-     * @param num 振幅变化 0-num
-     * @param maxInput 最小值
-     * @param minInput 最大值
+     * @param factor    动态因子，传入0的时候表示特别随机，不等于0的时候就你传入什么返回的结果就是一定的
+     * @param num       振幅变化 0-num
+     * @param maxInput  最小值
+     * @param minInput  最大值
      * @return
      */
     // TODO 根据函数造数据
-    public static double[] generateDataBy(double[] inputData, long factor,double num,double maxInput,double minInput) {
+    public static double[] generateDataBy(double[] inputData, long factor, double num, double maxInput, double minInput) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
         }
         Random rand = new Random();
         // 创建一个伪随机数生成器，使用因子作为种子
-        if (factor != 0){
+        if (factor != 0) {
             rand = new Random(factor);
         }
         // 创建一个数组来存储生成的数据
@@ -266,29 +269,29 @@ public class CreateCommonsDataS {
         // double[] polyCoefficients = fitPolynomial(inputData, 8);
         // 遍历输入数据的每个元素，生成数据并保持原始数据特征
         for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i]==0){
-                generatedData[i] = inputData[i];
-                continue;
-            }
-            double noise = rand.nextDouble()*num;
+
+            generatedData[i] = inputData[i];
+
+            double noise = rand.nextDouble() * num;
 
             // 根据原始数据的分布特征添加噪声
             if (rand.nextBoolean()) {
                 noise = -noise;
             }
 
-            double generatedValue =  noise +generatedData[i];
+            double generatedValue = noise + generatedData[i];
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
 
-            generatedData[i] = generatedValue ;
+            generatedData[i] = generatedValue;
         }
 
         // 返回生成的数据
         return generatedData;
     }
-    public static double[] generateDataByNoMinMax(double[] inputData, long factor,double num) {
+
+    public static double[] generateDataByNoMinMax(double[] inputData, long factor, double num) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -308,7 +311,7 @@ public class CreateCommonsDataS {
 
         Random rand = new Random();
         // 创建一个伪随机数生成器，使用因子作为种子
-        if (factor != 0){
+        if (factor != 0) {
             rand = new Random(factor);
         }
         // 创建一个数组来存储生成的数据
@@ -318,37 +321,37 @@ public class CreateCommonsDataS {
         // double[] polyCoefficients = fitPolynomial(inputData, 8);
         // 遍历输入数据的每个元素，生成数据并保持原始数据特征
         for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i]==0){
-                generatedData[i] = inputData[i];
-                continue;
-            }
-            double noise = rand.nextDouble()*num;
+
+            generatedData[i] = inputData[i];
+
+            double noise = rand.nextDouble() * num;
 
             // 根据原始数据的分布特征添加噪声
             if (rand.nextBoolean()) {
                 noise = -noise;
             }
 
-            double generatedValue =  noise +generatedData[i];
+            double generatedValue = noise + generatedData[i];
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
 
-            generatedData[i] = generatedValue ;
+            generatedData[i] = generatedValue;
         }
 
         // 返回生成的数据
         return generatedData;
     }
+
     /**
-     * @deprecated
      * @param inputData 数据样式
-     * @param factor 数据因子
-     * @param num 抬高或者降低曲线
+     * @param factor    数据因子
+     * @param num       抬高或者降低曲线
      * @return
+     * @deprecated
      */
     @Deprecated
-    public static double[] generateData(double[] inputData, double factor,double num,double[] polyCoefficients) {
+    public static double[] generateData(double[] inputData, double factor, double num, double[] polyCoefficients) {
         // 检查输入数据是否为空或长度为0，如果是则返回空数组
         if (inputData == null || inputData.length == 0) {
             return new double[0];
@@ -377,16 +380,16 @@ public class CreateCommonsDataS {
         // double[] polyCoefficients = fitPolynomial(inputData, 8);
         // 遍历输入数据的每个元素，生成数据并保持原始数据特征
         for (int i = 0; i < inputData.length; i++) {
-            if (inputData[i]==0){
+            if (inputData[i] == 0) {
                 generatedData[i] = inputData[i];
                 continue;
             }
 
 
             // 根据原始数据的分布特征添加噪声
-            double noise = generateNoise(inputData,factor, rand);
+            double noise = generateNoise(inputData, factor, rand);
 
-            double generatedValue = inputData[i] + noise+num;
+            double generatedValue = inputData[i] + noise + num;
 
             // 确保生成的数据在原始数据范围内
             generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
@@ -400,7 +403,8 @@ public class CreateCommonsDataS {
 
     /**
      * 多项式拟合函数
-     * @param data 原数据
+     *
+     * @param data   原数据
      * @param degree 阶乘
      * @return 返回的是阶乘系数 例如 a+（a1）x+（a2）x^2;  那么这就是二阶  然后返回的系数就是三个
      */
@@ -415,9 +419,8 @@ public class CreateCommonsDataS {
     }
 
     /**
-     *
      * @param coefficients 多项式拟合的系数
-     * @param x 取哪一个值
+     * @param x            取哪一个值
      * @return 返回某个值
      */
     // TODO 多项式求值函数
@@ -430,58 +433,62 @@ public class CreateCommonsDataS {
     }
 
     /**
-     * @apiNote 生成噪声函数，根据原始数据的分布特征
      * @param inputData 输入的数据
-     * @param factor 因子
-     * @param rand 伪随机数
+     * @param factor    因子
+     * @param rand      伪随机数
      * @return 返回噪声数
+     * @apiNote 生成噪声函数，根据原始数据的分布特征
      */
     private static double generateNoise(double[] inputData, double factor, Random rand) {
         int maxPlace = getMaxPlace(inputData);
         // 根据占比最多的位生成噪声，使用 factor 控制噪声的幅度
-        double noise = (rand.nextDouble()*0.34 * Math.pow(10, maxPlace-1));
+        double noise = (rand.nextDouble() * 0.34 * Math.pow(10, maxPlace - 1));
         // 引入正负号
         if (rand.nextBoolean()) {
             noise = -noise;
         }
         return noise;
     }
+
     /**
-     * @apiNote 生成噪声函数，根据原始数据的分布特征
      * @param rands 波动范围
-     * @param rand 伪随机数
+     * @param rand  伪随机数
      * @return 返回噪声数
+     * @apiNote 生成噪声函数，根据原始数据的分布特征
      */
-    private static double generateNoisePlus( double rands, Random rand) {
+    private static double generateNoisePlus(double rands, Random rand) {
         // 根据占比最多的位生成噪声，使用 factor 控制噪声的幅度
-        double noise = (rand.nextDouble()*0.34 * rands);
+        double noise = (rand.nextDouble() * 0.34 * rands);
         // 引入正负号
         if (rand.nextBoolean()) {
             noise = -noise;
         }
         return noise;
     }
+
     /**
-     * @deprecated
-     * @apiNote 生成噪声函数，根据原始数据的分布特征
      * @param inputData 输入的数据
-     * @param factor 因子
-     * @param rand 伪随机数
+     * @param factor    因子
+     * @param rand      伪随机数
      * @return 返回噪声数
+     * @apiNote 生成噪声函数，根据原始数据的分布特征
+     * @deprecated
      */
     @Deprecated
     private static double generateNoiseByFactor(double[] inputData, double factor, Random rand) {
         int maxPlace = getMaxPlace(inputData);
         // 根据占比最多的位生成噪声，使用 factor 控制噪声的幅度
-        double noise = (rand.nextDouble()*factor);
+        double noise = (rand.nextDouble() * factor);
         // 引入正负号
         if (rand.nextBoolean()) {
             noise = -noise;
         }
         return noise;
     }
+
     /**
      * 统计几位数占比最多
+     *
      * @param inputData 原数据
      * @return 返回最大占比的位数
      */
@@ -509,14 +516,13 @@ public class CreateCommonsDataS {
     }
 
     /**
-     *
-     * @param number 总数
-     * @param proportions 原比例
+     * @param number        总数
+     * @param proportions   原比例
      * @param decimalPlaces 保留几位小数
-     * @param num 伪随机数的动态因子
+     * @param num           伪随机数的动态因子
      * @return 返回经过方法的比例占比
      */
-    public static double[] distributeProportionally(double number, double[] proportions, int decimalPlaces,double num,double DataRate) {
+    public static double[] distributeProportionally(double number, double[] proportions, int decimalPlaces, double num, double DataRate) {
         if (number <= 0 || proportions == null || proportions.length == 0 || decimalPlaces < 0) {
             throw new IllegalArgumentException("无效的输入");
         }
@@ -537,19 +543,19 @@ public class CreateCommonsDataS {
         DecimalFormat df = new DecimalFormat();
         df.setRoundingMode(RoundingMode.HALF_UP); // 使用四舍五入
         df.setMaximumFractionDigits(decimalPlaces);
-        String strNumber= "";
+        String strNumber = "";
         //得到最大占比的位数众数
 
         // 初始化数组，给每个位置分配一个随机值
         for (int i = 0; i < proportions.length; i++) {
-            if (proportions[i]==0){
+            if (proportions[i] == 0) {
                 continue;
             }
             double randValue = random.nextDouble();
-            if (random.nextBoolean()){
+            if (random.nextBoolean()) {
                 randValue = -randValue;
             }
-            proportions[i] = Math.abs(randValue*DataRate)+proportions[i];
+            proportions[i] = Math.abs(randValue * DataRate) + proportions[i];
 
             sum += proportions[i];
         }
@@ -557,22 +563,22 @@ public class CreateCommonsDataS {
         // 缩放分配的值以满足给定的比例，同时保持总和不变
         for (int i = 0; i < proportions.length; i++) {
             String strNum = df.format((proportions[i] / sum) * number);
-            if (strNum.contains(",")){
-                strNum = strNum.replace(",","");
+            if (strNum.contains(",")) {
+                strNum = strNum.replace(",", "");
             }
-            distributed[i] =  Double.parseDouble(strNum);
+            distributed[i] = Double.parseDouble(strNum);
         }
         //保持总数尽量不变
         for (int i = 0; i < distributed.length; i++) {
             double v = distributed[i];
             if (v > max) {
                 max = v;
-                maxIndex =i;
+                maxIndex = i;
             }
             sumPlus += v;
         }
-        if (sumPlus!=number){
-            distributed[maxIndex]+= (number - sumPlus);
+        if (sumPlus != number) {
+            distributed[maxIndex] += (number - sumPlus);
         }
 
         return distributed;
@@ -580,7 +586,7 @@ public class CreateCommonsDataS {
 
     public static void main(String[] args) {
 
-        double[] doubles = distributeProportionally(6, new double[]{0, 1 ,1,1,1,1,1,1,1,8},0,26,1);
+        double[] doubles = distributeProportionally(6, new double[]{0, 1, 1, 1, 1, 1, 1, 1, 1, 8}, 0, 26, 1);
         List<Double> collect = Arrays.stream(doubles).boxed().collect(Collectors.toList());
         System.out.println(collect);
     }
