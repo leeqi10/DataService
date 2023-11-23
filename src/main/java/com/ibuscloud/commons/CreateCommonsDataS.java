@@ -288,6 +288,58 @@ public class CreateCommonsDataS {
         // 返回生成的数据
         return generatedData;
     }
+    public static double[] generateDataByNoMinMax(double[] inputData, long factor,double num) {
+        // 检查输入数据是否为空或长度为0，如果是则返回空数组
+        if (inputData == null || inputData.length == 0) {
+            return new double[0];
+        }
+
+        // 计算原始数据的最大值和最小值
+        double maxInput = Double.MIN_VALUE;
+        double minInput = Double.MAX_VALUE;
+        for (double value : inputData) {
+            if (value > maxInput) {
+                maxInput = value;
+            }
+            if (value < minInput) {
+                minInput = value;
+            }
+        }
+
+        Random rand = new Random();
+        // 创建一个伪随机数生成器，使用因子作为种子
+        if (factor != 0){
+            rand = new Random(factor);
+        }
+        // 创建一个数组来存储生成的数据
+        double[] generatedData = new double[inputData.length];
+        // 计算多项式拟合的系数
+        // 使用 Apache Commons Math 库进行多项式拟合
+        // double[] polyCoefficients = fitPolynomial(inputData, 8);
+        // 遍历输入数据的每个元素，生成数据并保持原始数据特征
+        for (int i = 0; i < inputData.length; i++) {
+            if (inputData[i]==0){
+                generatedData[i] = inputData[i];
+                continue;
+            }
+            double noise = rand.nextDouble()*num;
+
+            // 根据原始数据的分布特征添加噪声
+            if (rand.nextBoolean()) {
+                noise = -noise;
+            }
+
+            double generatedValue =  noise +generatedData[i];
+
+            // 确保生成的数据在原始数据范围内
+            generatedValue = Math.min(maxInput, Math.max(minInput, generatedValue));
+
+            generatedData[i] = generatedValue ;
+        }
+
+        // 返回生成的数据
+        return generatedData;
+    }
     /**
      * @deprecated
      * @param inputData 数据样式
